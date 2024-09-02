@@ -82,10 +82,12 @@ public abstract class VaultCharmControllerScreenMixin extends AbstractContainerS
 
             VaultCharmControllerContainer menu = this.getMenu();
 
-            if (menu instanceof SearchInterface)
+            if (menu instanceof SearchInterface search)
             {
                 // Trigger search query on server side.
                 JunkControllerNetwork.sendToServer(new UpdateSearchQuery(this.searchQuery));
+                // Trigger search query on client side.
+                search.updateSearchQuery(this.searchQuery);
             }
         }
     }
