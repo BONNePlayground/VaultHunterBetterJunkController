@@ -25,6 +25,7 @@ import iskallia.vault.container.VaultCharmControllerContainer;
 import iskallia.vault.world.data.VaultCharmData;
 import lv.id.bonne.vaulthunters.junkcontroller.interfaces.SearchInterface;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
@@ -38,6 +39,7 @@ public abstract class VaultCharmControllerContainerMixin implements SearchInterf
 {
     /**
      * This mixin clones VaultCharmInventory whitelist in new filteredList that is used for displaying elements.
+     *
      * @param instance The original instance of VaultCharmInventory
      * @return The whitelist of VaultCharmInventory.
      */
@@ -53,6 +55,7 @@ public abstract class VaultCharmControllerContainerMixin implements SearchInterf
 
     /**
      * This mixin triggers search query update on new item adding with quick move.
+     *
      * @param playerIn Player who triggers quick move
      * @param index Index from which quick move happens
      * @param cir Callback information
@@ -68,6 +71,7 @@ public abstract class VaultCharmControllerContainerMixin implements SearchInterf
 
     /**
      * This mixin triggers search query update on clicking item in menu or adding a new one.
+     *
      * @param slotId Slot that is clicked
      * @param dragType Drag type
      * @param clickTypeIn Click type
@@ -89,6 +93,7 @@ public abstract class VaultCharmControllerContainerMixin implements SearchInterf
 
     /**
      * This method redirects this.whiteList.size() to this.filteredList.size()
+     *
      * @param instance The original object list.
      * @return Size of filteredList
      */
@@ -103,6 +108,7 @@ public abstract class VaultCharmControllerContainerMixin implements SearchInterf
 
     /**
      * This method redirects this.whiteList.get(int) to this.filteredList.get(int)
+     *
      * @param instance The original object list.
      * @param i the index of element
      * @return the object from filteredList at requested index.
@@ -118,6 +124,7 @@ public abstract class VaultCharmControllerContainerMixin implements SearchInterf
 
     /**
      * This is main method that performs sorting and searching objects in filtered list.
+     *
      * @param searchQuery Nullable object of search text.
      */
     @Unique
@@ -161,11 +168,20 @@ public abstract class VaultCharmControllerContainerMixin implements SearchInterf
 
 
     /**
-     * Accessor to the whitelist object.
+     * The original scrollTo method does not update currentStart to correct position.
+     * It could be `inject` with before `shiftInventoryIndexes` but it adds +9 and -9 depending
+     * on scroll direction, that is not necessary as start is calculated based on scroll position.
+     * @param scroll new scroll position
+     * @param ci callback
      */
-    @Shadow(remap = false)
-    @Final
-    private List<ResourceLocation> whitelist;
+    @Inject(method = "scrollTo",
+        at = @At(value = "INVOKE", target = "Liskallia/vault/container/VaultCharmControllerContainer;updateVisibleItems()V"),
+        remap = false)
+    public void scrollTo(float scroll, CallbackInfo ci)
+    {
+        // Make current start to a correct value
+        this.currentStart = Mth.clamp((int) (scroll * (this.inventorySize - 54)), 0, Math.max(0, this.inventorySize - 54));
+    }
 
 
     /**
@@ -173,6 +189,27 @@ public abstract class VaultCharmControllerContainerMixin implements SearchInterf
      */
     @Shadow(remap = false)
     protected abstract void updateVisibleItems();
+
+
+    /**
+     * Accessor to the whitelist object.
+     */
+    @Shadow(remap = false)
+    @Final
+    private List<ResourceLocation> whitelist;
+
+    /**
+     * Accessor to inventorySize field.
+     */
+    @Final
+    @Shadow(remap = false)
+    private int inventorySize;
+
+    /**
+     * Accessor to currentStart field.
+     */
+    @Shadow(remap = false)
+    private int currentStart;
 
     /**
      * List of filteredList elements.
