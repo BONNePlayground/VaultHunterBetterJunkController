@@ -177,10 +177,10 @@ public abstract class VaultCharmControllerContainerMixin implements SearchInterf
     @Inject(method = "scrollTo",
         at = @At(value = "INVOKE", target = "Liskallia/vault/container/VaultCharmControllerContainer;updateVisibleItems()V"),
         remap = false)
-    public void scrollTo(float scroll, CallbackInfo ci)
+    public void injectProperStartValue(float scroll, CallbackInfo ci)
     {
         // Make current start to a correct value
-        this.currentStart = Mth.clamp((int) (scroll * (this.inventorySize - 54)), 0, Math.max(0, this.inventorySize - 54));
+        this.currentStart = Math.round(Mth.clamp(scroll * (this.inventorySize - 54), 0, Math.max(0, this.inventorySize - 54)));
     }
 
 
