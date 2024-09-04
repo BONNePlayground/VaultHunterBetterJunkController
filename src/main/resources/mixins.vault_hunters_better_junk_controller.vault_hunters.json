@@ -4,9 +4,12 @@
   "refmap": "mixins.vault_hunters_better_junk_controller.refmap.json",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "DepositUpgradeItemAccessor",
     "ScreenAccessor",
+    "VaultCharmControllerBlockMixin",
     "VaultCharmControllerContainerMixin",
-    "VaultCharmControllerContainerSlotMixin"
+    "VaultCharmControllerContainerSlotMixin",
+    "VaultCharmDataAccessor"
   ],
   "client": [
     "AbstractContainerScreenMixin",
