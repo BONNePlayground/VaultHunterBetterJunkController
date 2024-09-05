@@ -10,5 +10,8 @@ This mod implements 3 new functions in the Junk Controller:
 * Search - a synchronization with JEI text area to show only items that contain searched text
 * Drag and drop - you can now place items using Drag and Drop from JEI into the controller directly.
 
+Players can also use **Backpacks** with **Deposit Upgrade** to insert items into Junk Controller.
+Just need to shift + right click on Junk Controller while holding backpack.
+
 **NOTE:**
 In VaultHunters Junk Controller operates on server side, so you need the mod to be on both: _CLIENT_ and _SERVER_ to operate.
