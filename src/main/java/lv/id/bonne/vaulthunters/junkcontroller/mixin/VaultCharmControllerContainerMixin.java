@@ -92,6 +92,22 @@ public abstract class VaultCharmControllerContainerMixin implements SearchInterf
 
 
     /**
+     * This method checks if filter is enabled before using it in update menu.
+     *
+     * @param ci callback information
+     */
+    @Inject(method = "updateVisibleItems", at = @At(value = "HEAD"), remap = false)
+    private void checkNonClientUsers(CallbackInfo ci)
+    {
+        if (this.searchQuery.isBlank() && this.filteredList.size() != this.whitelist.size())
+        {
+            this.filteredList.clear();
+            this.filteredList.addAll(this.whitelist);
+        }
+    }
+
+
+    /**
      * This method redirects this.whiteList.size() to this.filteredList.size()
      *
      * @param instance The original object list.
