@@ -10,10 +10,12 @@ package lv.id.bonne.vaulthunters.junkcontroller.mixin;
 import com.mojang.blaze3d.vertex.PoseStack;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Objects;
 
 import iskallia.vault.client.gui.screen.VaultCharmControllerScreen;
@@ -91,6 +93,33 @@ public abstract class VaultCharmControllerScreenMixin extends AbstractContainerS
             }
         }
     }
+
+
+    /**
+     * This method fixes a bug that prevented clicking on scroll bar to set its position.
+     * @param mouseX The mouse X position
+     * @param mouseY The mouse Y position
+     * @param button Clicked button id
+     * @param cir Callback Info.
+     */
+    @Inject(method = "mouseClicked", at = @At(value = "RETURN", ordinal = 0))
+    private void fixScrollBarClick(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir)
+    {
+        this.mouseDragged(mouseX, mouseY, button, 0, 0);
+    }
+
+
+    /**
+     * The mouse dragging accessor.
+     * @param mouseX The mouse X position
+     * @param mouseY The mouse Y position
+     * @param button Clicked button id
+     * @param dragX Dragging X offset.
+     * @param dragY Dragging Y offset.
+     * @return Boolean value of dragging.
+     */
+    @Shadow
+    public abstract boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY);
 
 
     /**
